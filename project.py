@@ -1,4 +1,4 @@
-# Imports here
+# Imports
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -16,10 +16,8 @@ data_dir = '../flower_data'
 train_dir = data_dir + '/train'
 valid_dir = data_dir + '/valid'
 test_dir = data_dir + '/test'
-# import os
-# os.listdir(train_dir) # returns list
 
-# TODO: Define your transforms for the training, validation, and testing sets
+# Define your transforms for the training, validation, and testing sets
 train_transforms = transforms.Compose([transforms.RandomRotation(30),
                                        transforms.RandomResizedCrop(224),
                                        transforms.RandomHorizontalFlip(),
@@ -40,12 +38,12 @@ validation_transforms = transforms.Compose([transforms.Resize(256),
                                                                  [0.229, 0.224, 0.225])])
 
 
-# TODO: Load the datasets with ImageFolder
+# Load the datasets with ImageFolder
 train_data = datasets.ImageFolder(train_dir, transform=train_transforms)
 validation_data = datasets.ImageFolder(valid_dir, transform=validation_transforms)
 test_data = datasets.ImageFolder(test_dir ,transform = test_transforms)
 
-# TODO: Using the image datasets and the trainforms, define the dataloaders
+# Using the image datasets and the trainforms, define the dataloaders
 trainloader = torch.utils.data.DataLoader(train_data, batch_size=64, shuffle=True)
 vloader = torch.utils.data.DataLoader(validation_data, batch_size =32,shuffle = True)
 testloader = torch.utils.data.DataLoader(test_data, batch_size = 20, shuffle = True)
@@ -64,17 +62,8 @@ structures = {"vgg16":25088,
               "densenet121" : 1024,
               "alexnet" : 9216 }
 
-# if torch.cuda.is_available():
-#    print("yes")
-# else:
-#     print("no")
-
-
-
-
 def nn_setup(structure='vgg16',dropout=0.5, hidden_layer1 = 120,lr = 0.001):
-    
-    
+        
     if structure == 'vgg16':
         model = models.vgg16(pretrained=True)        
     elif structure == 'densenet121':
@@ -113,11 +102,6 @@ def nn_setup(structure='vgg16',dropout=0.5, hidden_layer1 = 120,lr = 0.001):
     
 
 model,optimizer,criterion = nn_setup('densenet121')
-
-
-
-
-
 
 
 # Putting the above into functions, so they can be used later
@@ -167,9 +151,7 @@ for e in range(epochs):
                     
             vlost = vlost / len(vloader)
             accuracy = accuracy /len(vloader)
-            
-                    
-            
+
             print("Epoch: {}/{}... ".format(e+1, epochs),
                   "Loss: {:.4f}".format(running_loss/print_every),
                   "Validation Lost {:.4f}".format(vlost),
@@ -185,7 +167,7 @@ for e in range(epochs):
 
 
 
-# TODO: Do validation on the test set
+# Do validation on the test set
 def check_accuracy_on_test(testloader):    
     correct = 0
     total = 0
@@ -204,13 +186,7 @@ def check_accuracy_on_test(testloader):
 check_accuracy_on_test(testloader)
 
 
-
-
-
-
-
-
-# TODO: Save the checkpoint 
+# Function to save the checkpoint 
 model.class_to_idx = train_data.class_to_idx
 model.cpu
 torch.save({'structure' :'densenet121',
@@ -220,15 +196,7 @@ torch.save({'structure' :'densenet121',
             'checkpoint.pth')
 
 
-
-
-
-
-
-
-
-
-# TODO: Write a function that loads a checkpoint and rebuilds the model
+# Function that loads a checkpoint and rebuilds the model
 def load_model(path):
     checkpoint = torch.load('checkpoint.pth')
     structure = checkpoint['structure']
@@ -240,12 +208,6 @@ def load_model(path):
     
 load_model('checkpoint.pth')  
 print(model)
-
-
-
-
-
-
 
 
 def process_image(image):
@@ -263,24 +225,18 @@ def process_image(image):
     return img_tensor
     
     
-    # TODO: Process a PIL image for use in a PyTorch model
+# Process a PIL image for use in a PyTorch model
 
 img = (data_dir + '/test' + '/1/' + 'image_06752.jpg')
 img = process_image(img)
 print(img.shape)
 
 
-
-
-
-
 def imshow(image, ax=None, title=None):
     """Imshow for Tensor."""
     if ax is None:
         fig, ax = plt.subplots()
-    
-    # PyTorch tensors assume the color channel is the first dimension
-    # but matplotlib assumes is the third dimension
+
     image = image.numpy().transpose((1, 2, 0))
     
     # Undo preprocessing
@@ -299,14 +255,7 @@ def imshow(image, ax=None, title=None):
 imshow(process_image("flowers/test/1/image_06743.jpg"))
 
 
-
-
-
-
-
-
-''' Predict the class (or classes) of an image using a trained deep learning model.
-'''
+''' Predict the class (or classes) of an image using a trained deep learning model.'''
 model.class_to_idx =train_data.class_to_idx
 
 ctx = model.class_to_idx
@@ -325,28 +274,15 @@ def predict(image_path, model, topk=5):
     
     return probability.topk(topk)
     
-    # TODO: Implement the code to predict the class from an image file
 
-
-
-
-
-
-
-
-
-
-    
+# Implement the code to predict the class from an image file 
 img = (data_dir + '/test' + '/10/' + 'image_07104.jpg')
 val1, val2 = predict(img, model)
 print(val1)
 print(val2)
 
 
-
-
-
-# TODO: Display an image along with the top 5 classes
+# Display an image along with the top 5 classes
 def check_sanity():
     plt.rcParams["figure.figsize"] = (10,5)
     plt.subplot(211)
@@ -358,16 +294,13 @@ def check_sanity():
     image = process_image(path)
     probabilities = probabilities
     
-
     axs = imshow(image, ax = plt)
     axs.axis('off')
     axs.title(cat_to_name[str(index)])
     axs.show()
     
-    
     a = np.array(probabilities[0][0])
     b = [cat_to_name[str(index + 1)] for index in np.array(probabilities[1][0])]
-    
     
     N=float(len(b))
     fig,ax = plt.subplots(figsize=(8,3))
@@ -386,4 +319,4 @@ def check_sanity():
 
 
 check_sanity()
-print("Successful lol")
+print("Training Completed!")
