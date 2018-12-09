@@ -6,7 +6,7 @@
   
   When you've completed this project, you'll have an application that can be trained on any set of labelled images. Here your network will be learning about flowers and end up as a command line application. But, what you do with your new skills depends on your imagination and effort in building a dataset.
   
-  *This is the final Project of the Udacity AI with Python Nanodegree*
+  *This is the final project of Udacity's PyTorch Scholarship Challenge Nanodegree Program.*
 
 
 ## Dataset
